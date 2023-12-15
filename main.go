@@ -28,7 +28,7 @@ func main() {
 
 	mux.Post("/", server.HandleGenerateTitle)
 
-	http.ListenAndServe(":3000", mux)
+	http.ListenAndServe(":" + os.Getenv("PORT"), mux)
 }
 
 func (s *Server) GetTitle(interests []string) string {
