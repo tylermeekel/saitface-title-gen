@@ -28,13 +28,18 @@ func main() {
 
 	mux.Post("/", server.HandleGenerateTitle)
 
-	http.ListenAndServe(":" + os.Getenv("PORT"), mux)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	http.ListenAndServe(":"+port, mux)
 }
 
 func (s *Server) GetTitle(interests []string) string {
 
 	str := strings.Join(interests, "and ")
-	str = "Write 1 interesting title (interrogative sentence) related to " + str + " that can attract people to engage in discussions based on it."
+	str = "Write 1 interesting question related to the topics " + str + " that can attract people to engage in fun, meaningful discussions based on them."
 
 	resp, err := s.OAIClient.CreateChatCompletion(
 		context.Background(),
@@ -72,5 +77,7 @@ func (s *Server) HandleGenerateTitle(w http.ResponseWriter, r *http.Request) {
 	}{
 		Title: content,
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
